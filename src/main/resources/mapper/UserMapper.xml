@@ -1,0 +1,346 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+    "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.sunjianlin.sunspringboot.dao.UserMapper">
+
+    <resultMap id="BaseResultMap"
+               type="com.sunjianlin.sunspringboot.entity.UserEntity">
+        <id column="id" property="id" jdbcType="BIGINT"/>
+        <result column="user_code" property="userCode" jdbcType="VARCHAR"/>
+        <result column="user_name" property="userName" jdbcType="VARCHAR"/>
+        <result column="login_name" property="loginName" jdbcType="VARCHAR"/>
+        <result column="password" property="password" jdbcType="VARCHAR"/>
+        <result column="email" property="email" jdbcType="VARCHAR"/>
+        <result column="phone" property="phone" jdbcType="VARCHAR"/>
+        <result column="status" property="status" jdbcType="TINYINT"/>
+        <result column="create_date" property="createDate" jdbcType="DATE"/>
+        <result column="update_date" property="updateDate" jdbcType="DATE"/>
+        <result column="mark" property="mark" jdbcType="VARCHAR"/>
+    </resultMap>
+
+    <sql id="Base_Column_List" >
+        id, user_code,
+    </sql>
+
+    <sql id="selectSql">
+        <where>
+            <if test="id != null and id != ''">
+                AND id = #{id}
+            </if>
+            <if test="userCode != null and userCode != ''">
+                AND user_code = #{userCode}
+            </if>
+            <if test="userName != null and userName != ''">
+                AND user_name = #{userName}
+            </if>
+            <if test="loginName != null and loginName != ''">
+                AND login_name = #{loginName}
+            </if>
+            <if test="password != null and password != ''">
+                AND password = #{password}
+            </if>
+            <if test="email != null and email != ''">
+                AND email = #{email}
+            </if>
+            <if test="phone != null and phone != ''">
+                AND phone = #{phone}
+            </if>
+            <!--<if test="createDate != null">-->
+                <!--AND create_date = #{createDate}-->
+            <!--</if>-->
+            <!--<if test="updateDate != null">-->
+                <!--AND update_date = #{updateDate}-->
+            <!--</if>-->
+            <if test="mark != null and mark != ''">
+                AND mark = #{mark}
+            </if>
+        </where>
+    </sql>
+
+    <!-- 查询记录总条数 -->
+    <select id="countByMap" parameterType="java.util.Map" resultType="int">
+        select count(1) from user
+        <include refid="selectSql"/>
+    </select>
+
+    <!-- 更新记录 -->
+    <insert id="insert" parameterType="com.sunjianlin.sunspringboot.entity.UserEntity"
+            useGeneratedKeys="true" keyProperty="id">
+        insert into user
+        <trim prefix="(" suffix=")" suffixOverrides=",">
+            <if test="userCode != null and userCode != ''">
+                user_code,
+            </if>
+            <if test="userName != null and userName != ''">
+                user_name,
+            </if>
+            <if test="loginName != null and loginName != ''">
+                login_name,
+            </if>
+            <if test="password != null and password != ''">
+                password,
+            </if>
+            <if test="email != null and email != ''">
+                email,
+            </if>
+            <if test="phone != null and phone != ''">
+                phone,
+            </if>
+            <if test="status != null and status != ''">
+                status,
+            </if>
+            <if test="createDate != null">
+                create_date,
+            </if>
+            <if test="updateDate != null">
+                update_date,
+            </if>
+            <if test="mark != null and mark != ''">
+                mark,
+            </if>
+        </trim>
+        <trim prefix="values (" suffix=")" suffixOverrides=",">
+            <if test="userCode != null and userCode != ''">
+                #{userCode},
+            </if>
+            <if test="userName != null and userName != ''">
+                #{userName},
+            </if>
+            <if test="loginName != null and loginName != ''">
+                #{loginName},
+            </if>
+            <if test="password != null and password != ''">
+                #{password},
+            </if>
+            <if test="email != null and email != ''">
+                #{email},
+            </if>
+            <if test="phone != null and phone != ''">
+                #{phone},
+            </if>
+            <if test="status != null and status != ''">
+                #{status},
+            </if>
+            <if test="createDate != null">
+                #{createDate},
+            </if>
+            <if test="updateDate != null">
+                #{updateDate},
+            </if>
+            <if test="mark != null and mark != ''">
+                #{mark},
+            </if>
+        </trim>
+    </insert>
+
+    <!-- 批量更新记录 -->
+    <insert id="batchInsert" parameterType="java.util.List">
+        <foreach collection="list" item="item" index="index"
+                 separator=";">
+            insert into user
+            <trim prefix="(" suffix=")" suffixOverrides=",">
+                <if test="item.userCode != null and item.userCode != ''">
+                    user_code,
+                </if>
+                <if test="item.userName != null and item.userName != ''">
+                    user_name,
+                </if>
+                <if test="item.loginName != null and item.loginName != ''">
+                    login_name,
+                </if>
+                <if test="item.password != null and item.password != ''">
+                    password,
+                </if>
+                <if test="item.email != null and item.email != ''">
+                    email,
+                </if>
+                <if test="item.phone != null and item.phone != ''">
+                    phone,
+                </if>
+                <if test="item.status != null and item.status != ''">
+                    status,
+                </if>
+                <if test="item.createDate != null">
+                    create_date,
+                </if>
+                <if test="item.updateDate != null">
+                    update_date,
+                </if>
+                <if test="item.mark != null and item.mark != ''">
+                    mark,
+                </if>
+            </trim>
+            <trim prefix="values (" suffix=")" suffixOverrides=",">
+                <if test="item.userCode != null and item.userCode != ''">
+                    #{item.userCode},
+                </if>
+                <if test="item.userName != null and item.userName != ''">
+                    #{item.userName},
+                </if>
+                <if test="item.loginName != null and item.loginName != ''">
+                    #{item.loginName},
+                </if>
+                <if test="item.password != null and item.password != ''">
+                    #{item.password},
+                </if>
+                <if test="item.email != null and item.email != ''">
+                    #{item.email},
+                </if>
+                <if test="item.phone != null and item.phone != ''">
+                    #{item.phone},
+                </if>
+                <if test="item.status != null and item.status != ''">
+                    #{item.status},
+                </if>
+                <if test="item.createDate != null">
+                    #{item.createDate},
+                </if>
+                <if test="item.updateDate != null">
+                    #{item.updateDate},
+                </if>
+                <if test="item.mark != null and item.mark != ''">
+                    #{item.mark},
+                </if>
+            </trim>
+        </foreach>
+    </insert>
+
+    <!-- 更新单条记录 -->
+    <update id="update" parameterType="com.sunjianlin.sunspringboot.entity.UserEntity">
+        update user
+        <set>
+            <trim suffixOverrides=",">
+                <if test="userCode != null" >
+                    user_code = #{userCode},
+                </if>
+                <if test="userName != null">
+                    user_name = #{userName},
+                </if>
+                <if test="loginName != null">
+                    login_name = #{loginName},
+                </if>
+                <if test="password != null">
+                    password = #{password},
+                </if>
+                <if test="email != null">
+                    email = #{email},
+                </if>
+                <if test="phone != null">
+                    phone = #{phone},
+                </if>
+                <if test="status != null">
+                    status = #{status},
+                </if>
+                <if test="createDate != null">
+                    create_date = #{createDate},
+                </if>
+                <if test="updateDate != null">
+                    update_date = #{updateDate},
+                </if>
+                <if test="mark != null">
+                    mark = #{mark},
+                </if>
+            </trim>
+        </set>
+        where id = #{id}
+    </update>
+
+
+    <!-- 批量更新记录 -->
+    <update id="batchUpdate" parameterType="java.util.List">
+        <foreach collection="list" item="item" index="index"
+                 separator="OR">
+            UPDATE user
+            <set>
+                <trim suffixOverrides=",">
+                    <if test="item.userCode != null and item.userCode != ''">
+                        user_code = #{item.userCode},
+                    </if>
+                    <if test="item.userName != null and item.userName != ''">
+                        user_name = #{item.userName},
+                    </if>
+                    <if test="item.loginName != null and item.loginName != ''">
+                        login_name = #{item.loginName},
+                    </if>
+                    <if test="item.password != null and item.password != ''">
+                        password = #{item.password},
+                    </if>
+                    <if test="item.email != null and item.email != ''">
+                        email = #{item.email},
+                    </if>
+                    <if test="item.phone != null and item.phone != ''">
+                        phone = #{item.phone},
+                    </if>
+                    <if test="item.status != null and item.status != ''">
+                        status = #{item.status},
+                    </if>
+                    <if test="item.createDate != null">
+                        create_date = #{item.createDate},
+                    </if>
+                    <if test="item.updateDate != null">
+                        update_date = #{item.updateDate},
+                    </if>
+                    <if test="item.mark != null and item.mark != ''">
+                        mark = #{item.mark},
+                    </if>
+                </trim>
+            </set>
+            <where>
+                id = #{item.id}
+            </where>
+        </foreach>
+    </update>
+
+    <!-- 通过主键删除记录 -->
+    <delete id="deleteById" parameterType="java.lang.Long">
+        delete from user where id = #{id}
+    </delete>
+
+    <!-- 批量删除记录 -->
+    <delete id="batchDelete" parameterType="java.util.List">
+        delete from user where id IN
+        <foreach collection="list" item="item" open="(" separator=","
+                 close=")">
+            #{item.id}
+        </foreach>
+    </delete>
+
+    <!-- 通过主键查找记录 -->
+    <select id="selectById" parameterType="java.lang.Long" resultMap="BaseResultMap"
+            resultType="com.sunjianlin.sunspringboot.entity.UserEntity">
+        select * from user where id = #{id}
+    </select>
+
+    <!-- 查询符合条件的实体对象 -->
+    <select id="selectByProps" parameterType="java.util.Map" resultMap="BaseResultMap"
+            resultType="com.sunjianlin.sunspringboot.entity.UserEntity">
+        select * from user
+        <include refid="selectSql"/>
+        <!--<if test="ORDERBY != null and ORDERBY != ''">-->
+            <!--ORDER BY ${ORDERBY}-->
+        <!--</if>-->
+        <!--<if test="ORDER != null and ORDER != ''">-->
+            <!--${ORDER}-->
+        <!--</if>-->
+        <!--<if test="limit != null">-->
+            <!--LIMIT #{limit}-->
+        <!--</if>-->
+        <!--<if test="start != null">-->
+            <!--OFFSET #{start}-->
+        <!--</if>-->
+    </select>
+
+    <!-- 查询所有实体对象 -->
+    <select id="selectAll"  resultMap="BaseResultMap"
+            resultType="com.sunjianlin.sunspringboot.entity.UserEntity">
+        select * from user where 1=1
+    </select>
+
+    <!-- 根据原生Sql查询记录 -->
+    <select id="selectByNativeSql" parameterType="string" resultMap="BaseResultMap"
+            resultType="com.sunjianlin.sunspringboot.entity.UserEntity">
+        ${value}
+    </select>
+
+</mapper>
