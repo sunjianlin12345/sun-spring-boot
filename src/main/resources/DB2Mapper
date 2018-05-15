@@ -1,0 +1,27 @@
+# 数据库驱动
+jdbc.driver=com.mysql.jdbc.Driver
+# 数据库url
+jdbc.url=jdbc:mysql://111.230.43.224:3306/test201803
+# 用户名
+jdbc.username=sun
+# 密码
+jdbc.password=Sun123456!
+
+#注释
+author=sunjianlin
+
+# 数据库表名 table_cc
+tableName=visitor
+
+# 配置路径
+targetRoot=\\src\\main\\java
+targetResources=\\src\\main\\resources
+
+targetGroup=\\com\\sunjianlin\\sunspringboot
+moduleName=com.sunjianlin.sunspringboot
+
+entityTargetPackage=entity
+daoTargetPackage=dao
+serviceTargetPackage=service
+mapperTargetPackage=mapper
+

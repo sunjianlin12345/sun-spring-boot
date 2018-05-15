@@ -19,7 +19,7 @@ public class BaseEntity implements Serializable {
     /**
      * 创建时间
      */
-    private Date createDate;
+    private Date createDate = new Date();
 
     /**
      * 修改时间
@@ -38,9 +38,9 @@ public class BaseEntity implements Serializable {
         return createDate;
     }
 
-    public void setCreateDate(Date createDate) {
-        this.createDate = createDate;
-    }
+//    public void setCreateDate(Date createDate) {
+//        this.createDate = createDate;
+//    }
 
     public Date getUpdateDate() {
         return updateDate;

@@ -3,6 +3,19 @@
         "http://mybatis.org/dtd/mybatis-3-config.dtd">
 <configuration>
 
+    <!--报错“(properties?,settings?,typeAliases?,typeHandlers?,objectFactory?,objectWrapperFactory?,reflectorFactory?,plugins?,environments?,databaseIdProvider?,mappers?)”-->
+    <!--必须按照以下顺序-->
+    <!--<properties>...</properties>-->
+    <!--<settings>...</settings>-->
+    <!--<typeAliases>...</typeAliases>-->
+    <!--<typeHandlers>...</typeHandlers>-->
+    <!--<objectFactory>...</objectFactory>-->
+    <!--<objectWrapperFactory>...</objectWrapperFactory>-->
+    <!--<plugins>...</plugins>-->
+    <!--<environments>...</environments>-->
+    <!--<databaseIdProvider>...</databaseIdProvider>-->
+    <!--<mappers>...</mappers>-->
+
     <!--<typeAliases>-->
         <!--<typeAlias alias="Integer" type="java.lang.Integer" />-->
         <!--<typeAlias alias="Long" type="java.lang.Long" />-->
@@ -59,6 +72,18 @@
         <!-- 设置关联对象加载的形态，此处为按需加载字段(加载字段由SQL指 定)，不会加载关联表的所有字段，以提高性能 -->
         <setting name="aggressiveLazyLoading" value="false"/>
 
+        <!-- 指定 MyBatis 增加到日志名称的前缀。 -->
+        <!--<setting name="logPrefix" value="sql" />-->
+
+        <!-- 指定 MyBatis 所用日志的具体实现，未指定时将自动查找。 -->
+        <!--<setting name="logImpl" value="STDOUT_LOGGING" />-->
+
     </settings>
+
+    <plugins>
+        <plugin interceptor="com.sunjianlin.sunspringboot.common.PagePlugin">
+            <property name="dialect" value="mysql" />
+        </plugin>
+    </plugins>
 
 </configuration>

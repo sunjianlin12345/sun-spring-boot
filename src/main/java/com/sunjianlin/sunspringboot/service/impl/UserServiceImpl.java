@@ -1,10 +1,13 @@
 package com.sunjianlin.sunspringboot.service.impl;
 
+import com.sunjianlin.sunspringboot.common.QueryParams;
+import com.sunjianlin.sunspringboot.dao.UserMapper;
 import com.sunjianlin.sunspringboot.entity.UserEntity;
-import com.sunjianlin.sunspringboot.manager.IUserManager;
 import com.sunjianlin.sunspringboot.service.IUserService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+
+import java.util.List;
 
 /**
  * Created by sunjianlin
@@ -14,18 +17,18 @@ import org.springframework.stereotype.Service;
 public class UserServiceImpl implements IUserService {
 
     @Autowired
-    private IUserManager userManager;
+    private UserMapper userMapper;
 
     @Override
     public void addUser(UserEntity userEntity) {
-        userManager.addUser(userEntity);
+        userMapper.insert(userEntity);
     }
 
     @Override
     public boolean deleteUser(Long id) {
         boolean result = false;
 //        if() {
-//            userManager.deleteUser(id);
+//            userMapper.deleteById(id);
 //            result = true;
 //        }
         return result;
@@ -33,16 +36,19 @@ public class UserServiceImpl implements IUserService {
 
     @Override
     public int updateUser(UserEntity userEntity) {
-        return userManager.updateUser(userEntity);
+        return userMapper.update(userEntity);
     }
 
     @Override
     public UserEntity getById(Long id) {
-        return userManager.getById(id);
+        return userMapper.selectById(id);
     }
 
     @Override
     public UserEntity getByLoginName(String loginName) {
-        return userManager.getByLoginName(loginName);
+        QueryParams queryParams = new QueryParams();
+        queryParams.put("loginName", loginName);
+        List<UserEntity> list  = userMapper.selectByProps(queryParams);
+        return list.size() == 0 ? null : list.get(0);
     }
 }

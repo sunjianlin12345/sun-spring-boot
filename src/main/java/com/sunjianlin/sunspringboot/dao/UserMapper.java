@@ -2,7 +2,6 @@ package com.sunjianlin.sunspringboot.dao;
 
 import com.sunjianlin.sunspringboot.entity.UserEntity;
 import org.apache.ibatis.annotations.Mapper;
-import org.springframework.stereotype.Repository;
 
 /**
  * Created by sunjianlin

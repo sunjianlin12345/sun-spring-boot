@@ -53,4 +53,88 @@ public class CodeUtil {
         }
         return newDate+result;
     }
+
+    /**
+     * 根据指定字符分割，并组成驼峰命名格式
+     * @param filed
+     * @param regex
+     * @param lower true为首字母小写
+     * @return
+     */
+    public static String convertLowerOrUpper(String filed, String regex, boolean lower){
+        StringBuffer result = new StringBuffer("");
+        String[] chars = filed.split(regex);
+        String first = lower ?
+                convertFirstChar(chars[0], false)
+                : convertFirstChar(chars[0], true);
+        result.append(first);
+        for(int i=1; i<chars.length; i++) {
+            result.append(convertFirstChar(chars[i], true));
+        }
+        return result.toString();
+    }
+
+    /**
+     * 首字母大小写转换
+     * @param str
+     * @param beginUp
+     * @return
+     */
+    public static String convertFirstChar(String str, Boolean beginUp) {
+        char[] ch = str.toCharArray();
+        StringBuffer sbf = new StringBuffer();
+        for (int i = 0; i < ch.length; i++) {
+            if (i == 0 && beginUp) {// 如果首字母需大写
+                sbf.append(charToUpperCase(ch[i]));
+            } else {
+                sbf.append(charToLowerCase(ch[i]));
+            }
+        }
+        return sbf.toString();
+    }
+
+    /**
+     * 大小写转换
+     * @param str
+     * @param beginUp
+     * @return
+     */
+    public static String convertString(String str, Boolean beginUp) {
+        char[] ch = str.toCharArray();
+        StringBuffer sbf = new StringBuffer();
+        for (int i = 0; i < ch.length; i++) {
+            if (beginUp) {
+                sbf.append(charToUpperCase(ch[i]));
+            } else {
+                sbf.append(charToLowerCase(ch[i]));
+            }
+        }
+        return sbf.toString();
+    }
+
+
+    /**
+     * 转大写
+     * @param ch
+     * @return
+     */
+    private static char charToUpperCase(char ch) {
+        if (ch <= 122 && ch >= 97) {
+            ch -= 32;
+        }
+        return ch;
+    }
+
+    /**
+     * 转小写
+     * @param ch
+     * @return
+     */
+    private static char charToLowerCase(char ch) {
+        if (ch <= 90 && ch >= 65) {
+            ch += 32;
+        }
+        return ch;
+    }
+
 }

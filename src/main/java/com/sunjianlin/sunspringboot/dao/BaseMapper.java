@@ -1,7 +1,6 @@
 package com.sunjianlin.sunspringboot.dao;
 
-import com.sunjianlin.sunspringboot.common.entity.Page;
-import com.sunjianlin.sunspringboot.common.entity.QueryParams;
+import com.sunjianlin.sunspringboot.common.QueryParams;
 
 import java.util.List;
 

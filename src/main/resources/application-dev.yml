@@ -1,9 +1,9 @@
 spring:
       datasource:
 #            name: era
-          url: jdbc:mysql://111.230.43.224:3306/test201803??useUnicode=true&characterEncoding=UTF-8&useJDBCCompliantTimezoneShift=true&useLegacyDatetimeCode=false&serverTimezone=UTC
-          username: sun
-          password: Sun123456!
+          url: jdbc:mysql://localhost:3306/test?useUnicode=true&characterEncoding=UTF-8&useJDBCCompliantTimezoneShift=true&useLegacyDatetimeCode=false&serverTimezone=UTC
+          username: test
+          password: test
           # 使用druid数据源
           type: com.alibaba.druid.pool.DruidDataSource
           driver-class-name: com.mysql.jdbc.Driver

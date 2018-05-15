@@ -92,7 +92,7 @@
 		<dependency>
 			<groupId>commons-codec</groupId>
 			<artifactId>commons-codec</artifactId>
-			<version>${commons-codec-version}</version><!--$NO-MVN-MAN-VER$-->
+			<version>${commons-codec-version}</version>
 		</dependency>
 
 		<dependency>

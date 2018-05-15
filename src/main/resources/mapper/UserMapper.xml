@@ -64,7 +64,7 @@
         <include refid="selectSql"/>
     </select>
 
-    <!-- 更新记录 -->
+    <!-- 新增记录 -->
     <insert id="insert" parameterType="com.sunjianlin.sunspringboot.entity.UserEntity"
             useGeneratedKeys="true" keyProperty="id">
         insert into user
@@ -134,10 +134,9 @@
         </trim>
     </insert>
 
-    <!-- 批量更新记录 -->
+    <!-- 批量新增记录 -->
     <insert id="batchInsert" parameterType="java.util.List">
-        <foreach collection="list" item="item" index="index"
-                 separator=";">
+        <foreach collection="list" item="item" index="index" separator=";">
             insert into user
             <trim prefix="(" suffix=")" suffixOverrides=",">
                 <if test="item.userCode != null and item.userCode != ''">
@@ -249,8 +248,7 @@
 
     <!-- 批量更新记录 -->
     <update id="batchUpdate" parameterType="java.util.List">
-        <foreach collection="list" item="item" index="index"
-                 separator="OR">
+        <foreach collection="list" item="item" index="index" separator="OR">
             UPDATE user
             <set>
                 <trim suffixOverrides=",">
@@ -300,8 +298,7 @@
     <!-- 批量删除记录 -->
     <delete id="batchDelete" parameterType="java.util.List">
         delete from user where id IN
-        <foreach collection="list" item="item" open="(" separator=","
-                 close=")">
+        <foreach collection="list" item="item" open="(" separator="," close=")">
             #{item.id}
         </foreach>
     </delete>
