@@ -6,7 +6,7 @@
 
 	<!--application.yml 传递参数，不能使用logback 自带的<property>标签 -->
 	<!--<springProperty scope="context" name="logPath" source="logback.logdir"/>-->
-	<property name="logPath" value="F:\\IDEA_Environment\\workspace\\sun-spring-boot\\logs" />
+	<property name="logPath" value="logs" />
 	<property name="root.log.level" value="DEBUG" />
 
 	<!--%d{HH: mm:ss.SSS}——日志输出时间-->
