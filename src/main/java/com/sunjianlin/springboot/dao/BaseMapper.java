@@ -1,6 +1,6 @@
-package com.sunjianlin.sunspringboot.dao;
+package com.sunjianlin.springboot.dao;
 
-import com.sunjianlin.sunspringboot.common.QueryParams;
+import com.sunjianlin.springboot.common.QueryParams;
 
 import java.util.List;
 

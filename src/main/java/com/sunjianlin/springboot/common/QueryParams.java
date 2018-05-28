@@ -1,4 +1,4 @@
-package com.sunjianlin.sunspringboot.common;
+package com.sunjianlin.springboot.common;
 
 import java.sql.Date;
 import java.util.HashMap;

@@ -1,6 +1,6 @@
-package com.sunjianlin.sunspringboot.service;
+package com.sunjianlin.springboot.service;
 
-import com.sunjianlin.sunspringboot.entity.UserEntity;
+import com.sunjianlin.springboot.entity.UserEntity;
 
 /**
  * Created by sunjianlin

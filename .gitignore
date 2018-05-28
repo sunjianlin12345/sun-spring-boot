@@ -25,4 +25,14 @@ nbdist/
 .nb-gradle/
 doc/
 src/main/resources/static/
-src/main/resources/templates/
+src/main/resources/templates/common
+src/main/resources/application-dev.yml
+src/main/resources/DB2Mapper
+
+*.gitignore
+SQL/
+logs/
+src/main/java/com/sunjianlin/springboot/controller/TestRequestController.java
+src/main/java/com/sunjianlin/springboot/service/responseDTO/
+src/main/java/com/sunjianlin/springboot/entity/OperatorCopyEntity.java
+src/main/java/com/sunjianlin/springboot/manager/

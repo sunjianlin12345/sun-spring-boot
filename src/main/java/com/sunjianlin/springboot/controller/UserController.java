@@ -1,7 +1,7 @@
-package com.sunjianlin.sunspringboot.controller;
+package com.sunjianlin.springboot.controller;
 
-import com.sunjianlin.sunspringboot.entity.UserEntity;
-import com.sunjianlin.sunspringboot.service.IUserService;
+import com.sunjianlin.springboot.entity.UserEntity;
+import com.sunjianlin.springboot.service.IUserService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;

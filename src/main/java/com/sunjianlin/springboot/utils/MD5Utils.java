@@ -1,4 +1,4 @@
-package com.sunjianlin.sunspringboot.utils;
+package com.sunjianlin.springboot.utils;
 
 import java.security.MessageDigest;
 

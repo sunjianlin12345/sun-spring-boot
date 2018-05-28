@@ -1,9 +1,9 @@
-package com.sunjianlin.sunspringboot.service.impl;
+package com.sunjianlin.springboot.service.impl;
 
-import com.sunjianlin.sunspringboot.common.QueryParams;
-import com.sunjianlin.sunspringboot.dao.UserMapper;
-import com.sunjianlin.sunspringboot.entity.UserEntity;
-import com.sunjianlin.sunspringboot.service.IUserService;
+import com.sunjianlin.springboot.entity.UserEntity;
+import com.sunjianlin.springboot.common.QueryParams;
+import com.sunjianlin.springboot.dao.UserMapper;
+import com.sunjianlin.springboot.service.IUserService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 

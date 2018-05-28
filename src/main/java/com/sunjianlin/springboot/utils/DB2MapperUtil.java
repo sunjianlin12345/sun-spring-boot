@@ -1,4 +1,4 @@
-package com.sunjianlin.sunspringboot.utils;
+package com.sunjianlin.springboot.utils;
 
 
 import org.apache.commons.lang.StringUtils;
@@ -40,9 +40,15 @@ public class DB2MapperUtil {
 
     private static Connection conn = null;
 
+    private static PreparedStatement pstate = null;
+
+    private static ResultSet rs = null;
+
     private static String author;
     //数据库表名
-    private static String tableName;
+    private static String[] tableNames;
+
+    private static String currentTableName;
 
     private static String targetJava;
 
@@ -142,7 +148,7 @@ public class DB2MapperUtil {
     /**
      * 读取配置
      */
-    private static void readProperties() throws Exception {
+    private static void readProperties() {
         try {
             prop.load(new BufferedInputStream( new FileInputStream(relativelyPath+"\\src\\main\\resources\\DB2Mapper")));
 //            for (Object key : prop.keySet()) {
@@ -153,7 +159,7 @@ public class DB2MapperUtil {
             username = (String) prop.get("jdbc.username");
             password = (String) prop.get("jdbc.password");
             author = (String) prop.get("author");
-            tableName = (String) prop.get("tableName");
+            tableNames = ((String) prop.get("tableName")).split(",");
             targetRoot = (String) prop.get("targetRoot");
             targetGroup = (String) prop.get("targetGroup");
             targetJava = targetRoot + targetGroup;
@@ -163,17 +169,17 @@ public class DB2MapperUtil {
             daoTargetPackage = (String) prop.get("daoTargetPackage");
             serviceTargetPackage = (String) prop.get("serviceTargetPackage");
             mapperTargetPackage = (String) prop.get("mapperTargetPackage");
-
-            entityName = CodeUtil.convertLowerOrUpper(tableName, "_", false)+"Entity";
-            daoName = CodeUtil.convertLowerOrUpper(tableName, "_", false)+"Mapper";
-            serviceName = "I"+CodeUtil.convertLowerOrUpper(tableName, "_", false)+"Service";
-            serviceImplName = CodeUtil.convertLowerOrUpper(tableName, "_", false)+"ServiceImpl";
         } catch (IOException e) {
             e.printStackTrace();
         }
-        if(StringUtils.isBlank(tableName)) {
-            System.err.println("表名tableName不能为空");
-            throw new Exception("表名tableName不能为空");
+        if(tableNames.length == 0 ) {
+            System.err.println("tableName不能为空");
+        } else {
+            Arrays.asList(tableNames).stream().forEach((String x) -> {
+                if(StringUtils.isBlank(x)) {
+                    System.err.println("不能有空白表名");
+                }
+            });
         }
     }
 
@@ -225,15 +231,14 @@ public class DB2MapperUtil {
      */
     private static void executeQuery() throws Exception {
         columns.clear();
-        PreparedStatement pstate = null;
         pstate = conn.prepareStatement(exitTable);
-        pstate.setString(1, tableName);
-        ResultSet tables = pstate.executeQuery();
-        if(tables.next()==false) {
-            System.err.println("表"+tableName+"不存在");
-            throw new Exception("表"+tableName+"不存在");
+        pstate.setString(1, currentTableName);
+        rs = pstate.executeQuery();
+        if(rs.next()==false) {
+            System.err.println("表"+currentTableName+"不存在");
+            throw new Exception("表"+currentTableName+"不存在");
         }
-        pstate = conn.prepareStatement(showFields + tableName);
+        pstate = conn.prepareStatement(showFields + currentTableName);
         ResultSet results = pstate.executeQuery();
         int error = 0;
         while (results.next()) {
@@ -246,8 +251,8 @@ public class DB2MapperUtil {
             }
         }
         if(error < 3) {
-            System.err.println("表" + tableName + "缺失字段id、createDate、updateDate");
-            throw new Exception("表" + tableName + "缺失字段id、createDate、updateDate");
+            System.err.println("表" + currentTableName + "缺失字段id、createDate、updateDate");
+            throw new Exception("表" + currentTableName + "缺失字段id、createDate、updateDate");
         }
     }
 
@@ -263,7 +268,7 @@ public class DB2MapperUtil {
         File file = new File(directoryName + "\\" + fileName);
         if(file.exists()) {
             System.err.println("文件 "+fileName+" 已存在");
-            throw new Exception("文件 "+fileName+" 已存在");
+            file.delete();
         }
         file.createNewFile();
         return file;
@@ -301,7 +306,7 @@ public class DB2MapperUtil {
      * @param className 类名或者接口名 例如：BaseMapper
      * @param extendAndImplements 继承或者实现的语句 例如：extends BaseEntity implements Serializable
      */
-    private static void appendClassHead(StringBuffer inputData, String packageName, String annotations,
+    private static void appendClassHead(StringBuffer inputData, String packageName, String[] annotations,
                                         String classType, String className, String extendAndImplements,
                                         String importPackage) {
         inputData.append("package " + packageName + ";");
@@ -316,11 +321,12 @@ public class DB2MapperUtil {
         inputData.append("\r\n");
         inputData.append(" */");
         inputData.append("\r\n");
-        if(StringUtils.isNotBlank(annotations)) {
-            inputData.append(annotations);
-            inputData.append("\r\n");
-        }
-        if(StringUtils.isBlank(annotations)) {
+        if(annotations.length > 0) {
+            Arrays.asList(annotations).stream().forEach(x -> {
+                inputData.append(x);
+                inputData.append("\r\n");
+            });
+        } else {
             extendAndImplements= "";
         }
         inputData.append("public " + classType + " " + className + " " + extendAndImplements + " {");
@@ -344,18 +350,22 @@ public class DB2MapperUtil {
         String fileName = entityName + ".java";
         File file = createFile(directoryName, fileName);
         StringBuffer inputData = new StringBuffer();
-        String importPackage = "import java.io.Serializable;\n";
-        appendClassHead(inputData, moduleName + "." + entityTargetPackage, "class", null,
+        String importPackage = "import java.io.Serializable;\n" +
+                "import lombok.Data;\n" +
+                "import lombok.EqualsAndHashCode;\n";
+        appendClassHead(inputData, moduleName + "." + entityTargetPackage,new String[]{
+                "@Data", "@EqualsAndHashCode(callSuper=true)"
+                }, "class",
                 entityName,
                 "extends BaseEntity implements Serializable",
                 importPackage);
 
         inputData.append("\r\n\r\n");
         inputData.append("    private static final long serialVersionUID = 1L;");
-        StringBuffer setGetData = new StringBuffer();
+//        StringBuffer setGetData = new StringBuffer();
         for(Column column : columns) {
-            if(column.getFiled().equals("id") || column.getFiled().equals("createDate")
-                    || column.getFiled().equals("updateDate")) {
+            if(column.getFiled().equals("id") || column.getFiled().equals("create_date")
+                    || column.getFiled().equals("update_date")) {
                 continue;
             }
             inputData.append("\r\n\r\n");
@@ -367,20 +377,20 @@ public class DB2MapperUtil {
             inputData.append("\r\n");
             inputData.append("    private " + column.getJavaType() + " " + column.getFirstLowerName() + ";");
             //set get方法
-            setGetData.append("\r\n\r\n");
-            setGetData.append("    public void set" + column.getFirstUpperName() + "(" + column.getJavaType() + " " + column.getFirstLowerName() + ") {");
-            setGetData.append("\r\n");
-            setGetData.append("        this." + column.getFirstLowerName() + " = " + column.getFirstLowerName() + ";");
-            setGetData.append("\r\n");
-            setGetData.append("    }");
-            setGetData.append("\r\n\r\n");
-            setGetData.append("    public " + column.getJavaType() + " get" + column.getFirstUpperName() + "() {");
-            setGetData.append("\r\n");
-            setGetData.append("        return " + column.getFirstLowerName() + ";");
-            setGetData.append("\r\n");
-            setGetData.append("    }");
+//            setGetData.append("\r\n\r\n");
+//            setGetData.append("    public void set" + column.getFirstUpperName() + "(" + column.getJavaType() + " " + column.getFirstLowerName() + ") {");
+//            setGetData.append("\r\n");
+//            setGetData.append("        this." + column.getFirstLowerName() + " = " + column.getFirstLowerName() + ";");
+//            setGetData.append("\r\n");
+//            setGetData.append("    }");
+//            setGetData.append("\r\n\r\n");
+//            setGetData.append("    public " + column.getJavaType() + " get" + column.getFirstUpperName() + "() {");
+//            setGetData.append("\r\n");
+//            setGetData.append("        return " + column.getFirstLowerName() + ";");
+//            setGetData.append("\r\n");
+//            setGetData.append("    }");
         }
-        inputData.append(setGetData);
+//        inputData.append(setGetData);
 
         appendClassEnd(inputData);
 
@@ -398,8 +408,8 @@ public class DB2MapperUtil {
         StringBuffer inputData = new StringBuffer();
         String importPackage = "import "+moduleName+"." +entityTargetPackage+"." +entityName + ";\n"
                 +"import org.apache.ibatis.annotations.Mapper;\n";
-        appendClassHead(inputData, moduleName + "." + daoTargetPackage, "@Mapper", "interface",
-                CodeUtil.convertLowerOrUpper(tableName, "_", false) + "Mapper",
+        appendClassHead(inputData, moduleName + "." + daoTargetPackage, new String[]{"@Mapper"}, "interface",
+                CodeUtil.convertLowerOrUpper(currentTableName, "_", false) + "Mapper",
                 "extends BaseMapper<"+entityName+">",
                 importPackage);
         inputData.append("\r\n");
@@ -417,7 +427,7 @@ public class DB2MapperUtil {
         File file = createFile(directoryName, fileName);
         StringBuffer inputData = new StringBuffer();
         String importPackage = "import "+moduleName+"." +entityTargetPackage+"." +entityName + ";\n";
-        appendClassHead(inputData, moduleName + "." + serviceTargetPackage, null, "interface",
+        appendClassHead(inputData, moduleName + "." + serviceTargetPackage, new String[]{}, "interface",
                 serviceName,
                 null,
                 importPackage);
@@ -441,13 +451,13 @@ public class DB2MapperUtil {
                 +"import org.springframework.beans.factory.annotation.Autowired;\n"
                 +"import org.springframework.stereotype.Service;\n"
                 ;
-        appendClassHead(inputData, moduleName+"."+serviceTargetPackage+".impl", "@Service(\""+CodeUtil.convertLowerOrUpper(tableName, "_", true) + "Service\")",
+        appendClassHead(inputData, moduleName+"."+serviceTargetPackage+".impl", new String[]{"@Service(\""+CodeUtil.convertLowerOrUpper(currentTableName, "_", true) + "Service\")"},
                 "class", serviceImplName,
                 "implements "+serviceName,
                 importPackage);
         inputData.append("\r\n");
         inputData.append("    @Autowired\n");
-        inputData.append("    private "+daoName+" "+CodeUtil.convertLowerOrUpper(tableName, "_", true) + "Mapper"+";\n");
+        inputData.append("    private "+daoName+" "+CodeUtil.convertLowerOrUpper(currentTableName, "_", true) + "Mapper"+";\n");
         inputData.append("\r\n");
         appendClassEnd(inputData);
         writeFile(file, inputData);
@@ -473,7 +483,10 @@ public class DB2MapperUtil {
         StringBuffer selectSqlData = new StringBuffer();
         StringBuffer insertFiledData = new StringBuffer();
         StringBuffer insertValuedData = new StringBuffer();
+        StringBuffer batchInsertFiledData = new StringBuffer();
+        StringBuffer batchInsertValuedData = new StringBuffer();
         StringBuffer updateData = new StringBuffer();
+        StringBuffer batchUpdateData = new StringBuffer();
         //resultMap
         inputData.append("    <resultMap id=\"BaseResultMap\"\n");
         inputData.append("               type=\""+entityClass+"\">\n");
@@ -487,12 +500,20 @@ public class DB2MapperUtil {
                     insertValuedData.append("            <if test=\""+column.getFirstLowerName()+" != null and "+column.getFirstLowerName()+" != ''\">\n");
                 } else {
                     insertFiledData.append("            <if test=\""+column.getFirstLowerName()+" != null\">\n");
-                    insertValuedData.append("            <if test=\""+column.getFirstLowerName()+" != null\">\\n");
+                    insertValuedData.append("            <if test=\""+column.getFirstLowerName()+" != null\">\n");
                 }
                 insertFiledData.append("                "+column.getFiled()+",\n");
                 insertFiledData.append("            </if>\n");
                 insertValuedData.append("                #{"+column.getFirstLowerName()+"},\n");
                 insertValuedData.append("            </if>\n");
+                if(column.getFiled().equals("create_date")){
+                    insertFiledData.append("            <if test=\""+column.getFirstLowerName()+" == null\">\n");
+                    insertFiledData.append("                "+column.getFiled()+",\n");
+                    insertFiledData.append("            </if>\n");
+                    insertValuedData.append("            <if test=\""+column.getFirstLowerName()+" == null\">\n");
+                    insertValuedData.append("                SYSDATE(),\n");
+                    insertValuedData.append("            </if>\n");
+                }
                 updateData.append("                <if test=\""+column.getFirstLowerName()+" != null\" >\n");
                 updateData.append("                    "+column.getFiled()+" = #{"+column.getFirstLowerName()+"},\n");
                 updateData.append("                </if>\n");
@@ -526,7 +547,7 @@ public class DB2MapperUtil {
         //countByMap
         inputData.append("    <!-- 查询记录总条数 -->\n");
         inputData.append("    <select id=\"countByMap\" parameterType=\"java.util.Map\" resultType=\"int\">\n");
-        inputData.append("        select count(1) from "+tableName+"\n");
+        inputData.append("        select count(1) from "+currentTableName+"\n");
         inputData.append("        <include refid=\"selectSql\"/>\n");
         inputData.append("    </select>\n");
         inputData.append("\r\n");
@@ -534,7 +555,7 @@ public class DB2MapperUtil {
         inputData.append("    <!-- 新增记录 -->\n");
         inputData.append("    <insert id=\"insert\" parameterType=\""+entityClass+"\"\n");
         inputData.append("            useGeneratedKeys=\"true\" keyProperty=\"id\">\n");
-        inputData.append("        insert into "+tableName+"\n");
+        inputData.append("        insert into "+currentTableName+"\n");
         inputData.append("        <trim prefix=\"(\" suffix=\")\" suffixOverrides=\",\">\n");
         inputData.append(insertFiledData);
         inputData.append("        </trim>\n");
@@ -547,7 +568,7 @@ public class DB2MapperUtil {
         inputData.append("    <!-- 批量新增记录 -->\n");
         inputData.append("    <insert id=\"batchInsert\" parameterType=\"java.util.List\">\n");
         inputData.append("    <foreach collection=\"list\" item=\"item\" index=\"index\" separator=\";\">\n");
-        inputData.append("        insert into "+tableName+"\n");
+        inputData.append("        insert into "+currentTableName+"\n");
         inputData.append("        <trim prefix=\"(\" suffix=\")\" suffixOverrides=\",\">\n");
         inputData.append(insertFiledData);
         inputData.append("        </trim>\n");
@@ -573,7 +594,7 @@ public class DB2MapperUtil {
         inputData.append("    <!-- 批量更新记录 -->\n");
         inputData.append("    <update id=\"batchUpdate\" parameterType=\"java.util.List\">\n");
         inputData.append("    <foreach collection=\"list\" item=\"item\" index=\"index\" separator=\"OR\">\n");
-        inputData.append("        UPDATE "+tableName+"\n");
+        inputData.append("        UPDATE "+currentTableName+"\n");
         inputData.append("        <set>\n");
         inputData.append("            <trim suffixOverrides=\",\">\n");
         inputData.append(updateData);
@@ -588,13 +609,13 @@ public class DB2MapperUtil {
         //deleteById
         inputData.append("    <!-- 通过主键删除记录 -->\n");
         inputData.append("    <delete id=\"deleteById\" parameterType=\"java.lang.Long\">\n");
-        inputData.append("        delete from "+tableName+" where id = #{id}\n");
+        inputData.append("        delete from "+currentTableName+" where id = #{id}\n");
         inputData.append("    </delete>\n");
         inputData.append("\r\n");
         //batchDelete
         inputData.append("    <!-- 批量删除记录 -->\n");
         inputData.append("    <delete id=\"batchDelete\" parameterType=\"java.util.List\">\n");
-        inputData.append("        delete from "+tableName+" where id IN\n");
+        inputData.append("        delete from "+currentTableName+" where id IN\n");
         inputData.append("        <foreach collection=\"list\" item=\"item\" open=\"(\" separator=\",\" close=\")\">\n");
         inputData.append("            #{item.id}\n");
         inputData.append("        </foreach>\n");
@@ -604,14 +625,14 @@ public class DB2MapperUtil {
         inputData.append("    <!-- 通过主键查找记录 -->\n");
         inputData.append("    <select id=\"selectById\" parameterType=\"java.lang.Long\" resultMap=\"BaseResultMap\"\n");
         inputData.append("            resultType=\""+entityClass+"\">\n");
-        inputData.append("        select * from "+tableName+" where id = #{id}\n");
+        inputData.append("        select * from "+currentTableName+" where id = #{id}\n");
         inputData.append("    </select>\n");
         inputData.append("\r\n");
         //selectByProps
         inputData.append("    <!-- 查询符合条件的实体对象 -->\n");
         inputData.append("    <select id=\"selectByProps\" parameterType=\"java.util.Map\" resultMap=\"BaseResultMap\"\n");
         inputData.append("            resultType=\""+entityClass+"\">\n");
-        inputData.append("        select * from "+tableName+"\n");
+        inputData.append("        select * from "+currentTableName+"\n");
         inputData.append("        <include refid=\"selectSql\"/>\n");
         inputData.append("    </select>\n");
         inputData.append("\r\n");
@@ -619,7 +640,7 @@ public class DB2MapperUtil {
         inputData.append("    <!-- 查询所有实体对象 -->\n");
         inputData.append("    <select id=\"selectAll\"  resultMap=\"BaseResultMap\"\n");
         inputData.append("            resultType=\""+entityClass+"\">\n");
-        inputData.append("        select * from "+tableName+" where 1=1\n");
+        inputData.append("        select * from "+currentTableName+" where 1=1\n");
         inputData.append("    </select>\n");
         inputData.append("\r\n");
         //selectByNativeSql
@@ -637,20 +658,55 @@ public class DB2MapperUtil {
     }
 
     public static void main(String[] args) {
+        readProperties();
+        initMysqlTypes();
         try {
-            readProperties();
-            initMysqlTypes();
             getConnection();
-            executeQuery();
-            System.out.println(columns);
-            //generaneEntity();
-            //generaneDao();
-            //generaneService();
-            generaneServiceImpl();
-            //generaneMapper();
+            Arrays.asList(tableNames).stream().forEach((String x) -> {
+            currentTableName = x;
+            entityName = CodeUtil.convertLowerOrUpper(currentTableName, "_", false)+"Entity";
+            daoName = CodeUtil.convertLowerOrUpper(currentTableName, "_", false)+"Mapper";
+            serviceName = "I"+CodeUtil.convertLowerOrUpper(currentTableName, "_", false)+"Service";
+            serviceImplName = CodeUtil.convertLowerOrUpper(currentTableName, "_", false)+"ServiceImpl";
+            try {
+                executeQuery();
+                System.out.println("\r\n"+currentTableName);
+//                generaneEntity();
+//                generaneDao();
+//                generaneService();
+//                generaneServiceImpl();
+                generaneMapper();
+            } catch (Exception e) {
+                e.printStackTrace();
+            }
+            });
         } catch (Exception e) {
-            e.printStackTrace();
+
+        } finally {
+            try {
+                if(rs != null){
+                    rs.close();
+                }
+            } catch (SQLException e) {
+                e.printStackTrace();
+            }
+            try {
+                if(pstate != null){
+                    pstate.close();
+                }
+            } catch (SQLException e) {
+                e.printStackTrace();
+            }
+            try {
+                if(conn != null){
+                        conn.close();
+                }
+            } catch (SQLException e) {
+                e.printStackTrace();
+            }
         }
+
+
 
     }
 

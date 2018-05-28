@@ -1,4 +1,4 @@
-package com.sunjianlin.sunspringboot.common;
+package com.sunjianlin.springboot.common;
 
 import org.apache.ibatis.executor.statement.StatementHandler;
 import org.apache.ibatis.mapping.BoundSql;
@@ -12,6 +12,8 @@ import java.util.Properties;
 /**
  * Created by sunjianlin
  * 2018年04月20日 17:54:16
+ *
+ * 定义在mybatis.xml中的插件
  */
 //@Intercepts 注解: 为当前插件指定要拦截哪个对象的哪个方法,以及方法中的参数
 @Intercepts({ @Signature(type = StatementHandler.class,

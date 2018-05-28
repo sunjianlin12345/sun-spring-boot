@@ -1,6 +1,4 @@
-package com.sunjianlin.sunspringboot.common;
-
-import java.util.HashMap;
+package com.sunjianlin.springboot.common;
 
 /**
  * 页面响应结果集

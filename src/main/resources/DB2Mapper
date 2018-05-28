@@ -1,24 +1,24 @@
 # 数据库驱动
 jdbc.driver=com.mysql.jdbc.Driver
 # 数据库url
-jdbc.url=jdbc:mysql://localhost:3306/test
+jdbc.url=jdbc:mysql://111.230.43.224:3306/test201803
 # 用户名
-jdbc.username=mysql
+jdbc.username=sun
 # 密码
-jdbc.password=mysql
+jdbc.password=Sun123456!
 
 #注释
-author=sun
+author=sunjianlin
 
-# 数据库表名 table_cc
-tableName=table_name
+# 数据库表名(逗号分隔) table_cc,table_dd,table_ee,...
+tableName=user,visitor
 
 # 配置路径
 targetRoot=\\src\\main\\java
 targetResources=\\src\\main\\resources
 
-targetGroup=\\com\\sun\\sunspringboot
-moduleName=com.sun.sunspringboot
+targetGroup=\\com\\sunjianlin\\springboot
+moduleName=com.sunjianlin.springboot
 
 entityTargetPackage=entity
 daoTargetPackage=dao

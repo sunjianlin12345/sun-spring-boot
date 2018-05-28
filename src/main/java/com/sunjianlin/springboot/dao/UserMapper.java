@@ -1,6 +1,6 @@
-package com.sunjianlin.sunspringboot.dao;
+package com.sunjianlin.springboot.dao;
 
-import com.sunjianlin.sunspringboot.entity.UserEntity;
+import com.sunjianlin.springboot.entity.UserEntity;
 import org.apache.ibatis.annotations.Mapper;
 
 /**
