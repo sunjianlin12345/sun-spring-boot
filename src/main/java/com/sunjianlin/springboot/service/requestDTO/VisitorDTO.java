@@ -1,4 +1,4 @@
-package com.sunjianlin.sunspringboot.service.requestDTO;
+package com.sunjianlin.springboot.service.requestDTO;
 
 import org.hibernate.validator.constraints.Length;
 

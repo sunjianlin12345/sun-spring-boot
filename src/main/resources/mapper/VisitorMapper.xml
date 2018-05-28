@@ -1,11 +1,11 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
-    "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
 
-<mapper namespace="com.sunjianlin.sunspringboot.dao.VisitorMapper">
+<mapper namespace="com.sunjianlin.springboot.dao.VisitorMapper">
 
     <resultMap id="BaseResultMap"
-               type="com.sunjianlin.sunspringboot.entity.VisitorEntity">
+               type="com.sunjianlin.springboot.entity.VisitorEntity">
         <id column="id" property="id" jdbcType="BIGINT"/>
         <result column="visitor_code" property="visitorCode" jdbcType="VARCHAR"/>
         <result column="name" property="name" jdbcType="VARCHAR"/>
@@ -16,9 +16,10 @@
         <result column="create_date" property="createDate" jdbcType="DATE"/>
         <result column="update_date" property="updateDate" jdbcType="DATE"/>
     </resultMap>
+
     <sql id="selectSql">
         <where>
-            <if test="id != null">
+            <if test="id != null and id != ''">
                 AND id = #{id}
             </if>
             <if test="visitorCode != null and visitorCode != ''">
@@ -39,20 +40,9 @@
             <if test="ipAddr != null and ipAddr != ''">
                 AND ip_addr = #{ipAddr}
             </if>
-            <if test="createStartDate != null">
-                <![CDATA[ AND create_date >= #{createStartDate} ]]>
-            </if>
-            <if test="createEndDate != null">
-                <![CDATA[ AND create_date <= #{createEndDate} ]]>
-            </if>
-            <if test="updateStartDate != null">
-                <![CDATA[ AND update_date >= #{updateStartDate} ]]>
-            </if>
-            <if test="updateEndDate != null">
-                <![CDATA[ AND update_date <= #{updateEndDate} ]]>
-            </if>
         </where>
     </sql>
+
     <!-- 查询记录总条数 -->
     <select id="countByMap" parameterType="java.util.Map" resultType="int">
         select count(1) from visitor
@@ -60,7 +50,7 @@
     </select>
 
     <!-- 新增记录 -->
-    <insert id="insert" parameterType="com.sunjianlin.sunspringboot.entity.VisitorEntity"
+    <insert id="insert" parameterType="com.sunjianlin.springboot.entity.VisitorEntity"
             useGeneratedKeys="true" keyProperty="id">
         insert into visitor
         <trim prefix="(" suffix=")" suffixOverrides=",">
@@ -108,99 +98,103 @@
             <if test="ipAddr != null and ipAddr != ''">
                 #{ipAddr},
             </if>
-            <if test="createDate != null">\n                #{createDate},
+            <if test="createDate != null">
+                #{createDate},
             </if>
-            <if test="updateDate != null">\n                #{updateDate},
+            <if test="updateDate != null">
+                #{updateDate},
             </if>
         </trim>
     </insert>
 
     <!-- 批量新增记录 -->
     <insert id="batchInsert" parameterType="java.util.List">
-    <foreach collection="list" item="item" index="index" separator=";">
-        insert into visitor
-        <trim prefix="(" suffix=")" suffixOverrides=",">
-            <if test="visitorCode != null and visitorCode != ''">
-                visitor_code,
-            </if>
-            <if test="name != null and name != ''">
-                name,
-            </if>
-            <if test="email != null and email != ''">
-                email,
-            </if>
-            <if test="phone != null and phone != ''">
-                phone,
-            </if>
-            <if test="message != null and message != ''">
-                message,
-            </if>
-            <if test="ipAddr != null and ipAddr != ''">
-                ip_addr,
-            </if>
-            <if test="createDate != null">
-                create_date,
-            </if>
-            <if test="updateDate != null">
-                update_date,
-            </if>
-        </trim>
-        <trim prefix="values (" suffix=")" suffixOverrides=",">
-            <if test="visitorCode != null and visitorCode != ''">
-                #{visitorCode},
-            </if>
-            <if test="name != null and name != ''">
-                #{name},
-            </if>
-            <if test="email != null and email != ''">
-                #{email},
-            </if>
-            <if test="phone != null and phone != ''">
-                #{phone},
-            </if>
-            <if test="message != null and message != ''">
-                #{message},
-            </if>
-            <if test="ipAddr != null and ipAddr != ''">
-                #{ipAddr},
-            </if>
-            <if test="createDate != null">\n                #{createDate},
-            </if>
-            <if test="updateDate != null">\n                #{updateDate},
-            </if>
-        </trim>
-    </foreach>
+        <foreach collection="list" item="item" index="index" separator=";">
+            insert into visitor
+            <trim prefix="(" suffix=")" suffixOverrides=",">
+                <if test="item.visitorCode != null and item.visitorCode != ''">
+                    visitor_code,
+                </if>
+                <if test="item.name != null and item.name != ''">
+                    name,
+                </if>
+                <if test="item.email != null and item.email != ''">
+                    email,
+                </if>
+                <if test="item.phone != null and item.phone != ''">
+                    phone,
+                </if>
+                <if test="item.message != null and item.message != ''">
+                    message,
+                </if>
+                <if test="item.ipAddr != null and item.ipAddr != ''">
+                    ip_addr,
+                </if>
+                <if test="item.createDate != null">
+                    create_date,
+                </if>
+                <if test="item.updateDate != null">
+                    update_date,
+                </if>
+            </trim>
+            <trim prefix="values (" suffix=")" suffixOverrides=",">
+                <if test="item.visitorCode != null and item.visitorCode != ''">
+                    #{item.visitorCode},
+                </if>
+                <if test="item.name != null and item.name != ''">
+                    #{item.name},
+                </if>
+                <if test="item.email != null and item.email != ''">
+                    #{item.email},
+                </if>
+                <if test="item.phone != null and item.phone != ''">
+                    #{item.phone},
+                </if>
+                <if test="item.message != null and item.message != ''">
+                    #{item.message},
+                </if>
+                <if test="item.ipAddr != null and item.ipAddr != ''">
+                    #{item.ipAddr},
+                </if>
+                <if test="item.createDate != null">
+                    #{item.createDate},
+                </if>
+                <if test="item.updateDate != null">
+                    #{item.updateDate},
+                </if>
+            </trim>
+        </foreach>
     </insert>
 
     <!-- 更新单条记录 -->
-    <update id="update" parameterType="com.sunjianlin.sunspringboot.entity.VisitorEntity">
-        update user
+    <update id="update" parameterType="com.sunjianlin.springboot.entity.VisitorEntity">
+        update visitor
         <set>
             <trim suffixOverrides=",">
-                <if test="visitorCode != null" >
+                    <if test="visitorCode != null">
                     visitor_code = #{visitorCode},
-                </if>
-                <if test="name != null" >
+                    </if>
+                    <if test="name != null">
                     name = #{name},
-                </if>
-                <if test="email != null" >
+                    </if>
+                    <if test="email != null">
                     email = #{email},
-                </if>
-                <if test="phone != null" >
+                    </if>
+                    <if test="phone != null">
                     phone = #{phone},
-                </if>
-                <if test="message != null" >
+                    </if>
+                    <if test="message != null">
                     message = #{message},
-                </if>
-                <if test="ipAddr != null" >
+                    </if>
+                    <if test="ipAddr != null">
                     ip_addr = #{ipAddr},
-                </if>
-                <if test="createDate != null" >
+                    </if>
+                    <if test="createDate != null">
                     create_date = #{createDate},
-                </if>
-                <if test="updateDate != null" >
+                    </if>
+                    <if test="updateDate != null">
                     update_date = #{updateDate},
-                </if>
+                    </if>
             </trim>
         </set>
         where id = #{id}
@@ -208,41 +202,42 @@
 
     <!-- 批量更新记录 -->
     <update id="batchUpdate" parameterType="java.util.List">
-    <foreach collection="list" item="item" index="index" separator="OR">
-        UPDATE visitor
-        <set>
-            <trim suffixOverrides=",">
-                <if test="visitorCode != null" >
-                    visitor_code = #{visitorCode},
-                </if>
-                <if test="name != null" >
-                    name = #{name},
-                </if>
-                <if test="email != null" >
-                    email = #{email},
-                </if>
-                <if test="phone != null" >
-                    phone = #{phone},
-                </if>
-                <if test="message != null" >
-                    message = #{message},
-                </if>
-                <if test="ipAddr != null" >
-                    ip_addr = #{ipAddr},
-                </if>
-                <if test="createDate != null" >
-                    create_date = #{createDate},
-                </if>
-                <if test="updateDate != null" >
-                    update_date = #{updateDate},
-                </if>
-            </trim>
-        </set>
-        <where>
-            id = #{item.id}
-        </where>
-    </foreach>
+        <foreach collection="list" item="item" index="index" separator="OR">
+            UPDATE visitor
+            <set>
+                <trim suffixOverrides=",">
+                        <if test="item.visitorCode != null">
+                        visitor_code = #{item.visitorCode},
+                        </if>
+                        <if test="item.name != null">
+                        name = #{item.name},
+                        </if>
+                        <if test="item.email != null">
+                        email = #{item.email},
+                        </if>
+                        <if test="item.phone != null">
+                        phone = #{item.phone},
+                        </if>
+                        <if test="item.message != null">
+                        message = #{item.message},
+                        </if>
+                        <if test="item.ipAddr != null">
+                        ip_addr = #{item.ipAddr},
+                        </if>
+                        <if test="item.createDate != null">
+                        create_date = #{item.createDate},
+                        </if>
+                        <if test="item.updateDate != null">
+                        update_date = #{item.updateDate},
+                        </if>
+                </trim>
+            </set>
+            <where>
+                id = #{item.id}
+            </where>
+        </foreach>
     </update>
+
 
     <!-- 通过主键删除记录 -->
     <delete id="deleteById" parameterType="java.lang.Long">
@@ -253,33 +248,45 @@
     <delete id="batchDelete" parameterType="java.util.List">
         delete from visitor where id IN
         <foreach collection="list" item="item" open="(" separator="," close=")">
-            #{item.id}
+        #{item.id}
         </foreach>
     </delete>
 
     <!-- 通过主键查找记录 -->
     <select id="selectById" parameterType="java.lang.Long" resultMap="BaseResultMap"
-            resultType="com.sunjianlin.sunspringboot.entity.VisitorEntity">
+            resultType="com.sunjianlin.springboot.entity.VisitorEntity">
         select * from visitor where id = #{id}
     </select>
 
     <!-- 查询符合条件的实体对象 -->
     <select id="selectByProps" parameterType="java.util.Map" resultMap="BaseResultMap"
-            resultType="com.sunjianlin.sunspringboot.entity.VisitorEntity">
+            resultType="com.sunjianlin.springboot.entity.VisitorEntity">
         select * from visitor
         <include refid="selectSql"/>
+        <!--<if test="ORDERBY != null and ORDERBY != ''">-->
+        <!--ORDER BY ${ORDERBY}-->
+        <!--</if>-->
+        <!--<if test="ORDER != null and ORDER != ''">-->
+        <!--${ORDER}-->
+        <!--</if>-->
+        <!--<if test="limit != null">-->
+        <!--LIMIT #{limit}-->
+        <!--</if>-->
+        <!--<if test="start != null">-->
+        <!--OFFSET #{start}-->
+        <!--</if>-->
     </select>
 
     <!-- 查询所有实体对象 -->
     <select id="selectAll"  resultMap="BaseResultMap"
-            resultType="com.sunjianlin.sunspringboot.entity.VisitorEntity">
+            resultType="com.sunjianlin.springboot.entity.VisitorEntity">
         select * from visitor where 1=1
     </select>
 
     <!-- 根据原生Sql查询记录 -->
-    <select id="selectByNativeSql"  resultMap="BaseResultMap"
-            resultType="com.sunjianlin.sunspringboot.entity.VisitorEntity">
-        ${value}
+    <select id="selectByNativeSql" parameterType="string" resultMap="BaseResultMap"
+            resultType="com.sunjianlin.springboot.entity.VisitorEntity">
+    ${value}
     </select>
 
 </mapper>
